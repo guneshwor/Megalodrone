@@ -1,0 +1,6 @@
+23 Feb 2015
+- setTHR increase, constant  and decrease with delay
+
+
+8 Mar 2015
+- Newping.h for sonar
