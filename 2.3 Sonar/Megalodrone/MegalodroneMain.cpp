@@ -17,9 +17,9 @@
 #include "Protocol.h"
 
 #include <avr/pgmspace.h>
+#include "NewPing.h"
 
 #define setDelay 7000
-
  
 //uint16_t intTime = 3000; 
 int16_t setTHR = 1100;
@@ -582,6 +582,7 @@ void annexCode() { // this code is excetuted at each loop and won't interfere wi
 }
 
 void setup() {
+  init_sonar(); // NewPing setup of pins and maximum distance.
   #if !defined(GPS_PROMINI)
     SerialOpen(0,SERIAL0_COM_SPEED);
     #if defined(PROMICRO)
