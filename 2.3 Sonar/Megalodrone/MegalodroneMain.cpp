@@ -22,7 +22,7 @@
 #define setDelay 7000
  
 //uint16_t intTime = 3000; 
-int16_t setTHR = 1100;
+uint16_t setTHR = 1100;
 int16_t thr_level = 1;
 uint16_t previousMillis = 0;
 
@@ -582,7 +582,6 @@ void annexCode() { // this code is excetuted at each loop and won't interfere wi
 }
 
 void setup() {
-  init_sonar(); // NewPing setup of pins and maximum distance.
   #if !defined(GPS_PROMINI)
     SerialOpen(0,SERIAL0_COM_SPEED);
     #if defined(PROMICRO)
@@ -648,6 +647,8 @@ void setup() {
     initOpenLRS();
   #endif
   initSensors();
+  //giro
+  initSonar(); // NewPing setup of pins and maximum distance.
   #if defined(I2C_GPS) || defined(GPS_SERIAL) || defined(GPS_FROM_OSD)
     GPS_set_pids();
   #endif
@@ -722,7 +723,7 @@ void setup() {
 }
 
 void go_arm() {
-  if(!f.ARMED){
+  if(!f.ARMED && pingCm()<=10){
     f.ARMED=1;
     
   } else if(!f.ARMED) { 
