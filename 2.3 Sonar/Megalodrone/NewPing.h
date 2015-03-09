@@ -89,35 +89,30 @@
 	#define OCIE2A OCIE2
 #endif
 
-//class NewPing {
-//	public:
-		//NewPing(uint8_t trigger_pin, uint8_t echo_pin, unsigned int max_cm_distance = MAX_SENSOR_DISTANCE);
-                
-		unsigned int ping();
-		unsigned long ping_cm();
-		unsigned long ping_in();
-		unsigned long ping_median(uint8_t it = 5);
-//		void ping_interrupt(void (*userFunc)(void));
+
+//		unsigned long ping_in();
+//		unsigned long ping_median(uint8_t it = 5);
+////		void ping_interrupt(void (*userFunc)(void));
 //		unsigned int get_interrupt();
-		unsigned int convert_cm(unsigned int echoTime);
-		unsigned int convert_in(unsigned int echoTime);
-#if TIMER_ENABLED == true
-		void ping_timer(void (*userFunc)(void));
-		boolean check_timer();
-		static unsigned long ping_result;
-		static void timer_us(unsigned int frequency, void (*userFunc)(void));
-		static void timer_ms(unsigned long frequency, void (*userFunc)(void));
-		static void timer_stop();
-#endif
+//		unsigned int convert_cm(unsigned int echoTime);
+//		unsigned int convert_in(unsigned int echoTime);
+//#if TIMER_ENABLED == true
+//		void ping_timer(void (*userFunc)(void));
+//		boolean check_timer();
+//		static unsigned long ping_result;
+//		static void timer_us(unsigned int frequency, void (*userFunc)(void));
+//		static void timer_ms(unsigned long frequency, void (*userFunc)(void));
+//		static void timer_stop();
+//#endif
 //	private:
-		boolean ping_trigger(boolean interrupt = false);
+//		boolean ping_trigger(boolean interrupt = false);
 //		void ping_interrupt2();
-#if TIMER_ENABLED == true
-		boolean ping_trigger_timer(unsigned int trigger_delay);
-		boolean ping_wait_timer();
-		static void timer_setup();
-		static void timer_ms_cntdwn();
-#endif
+//#if TIMER_ENABLED == true
+//		boolean ping_trigger_timer(unsigned int trigger_delay);
+//		boolean ping_wait_timer();
+//		static void timer_setup();
+//		static void timer_ms_cntdwn();
+//#endif
 //		uint8_t _echoPinInt;
 #ifndef __AVR__
 		uint8_t _triggerPin;
@@ -130,6 +125,8 @@
 		static unsigned int _maxEchoTime;
 		static unsigned long _max_time;
 //};
-void init_sonar();
-
+void initSonar();
+boolean pingTrigger(boolean interrupt = false);
+uint16_t ping();
+uint16_t pingCm();
 #endif
