@@ -26,6 +26,14 @@ uint16_t setTHR = 1100;
 int16_t thr_level = 1;
 uint16_t previousMillis = 0;
 
+// Sonar Alt PID Variables
+uint16_t previous_error = 0;   
+uint16_t  integral = 0;
+uint16_t setpoint = 50;  // set to 50cm for now
+uint8_t Kp = 100;
+uint8_t Ki = 100;
+uint8_t Kd = 100;
+
 /*********** RC alias *****************/
 
 const char pidnames[] PROGMEM =
@@ -360,6 +368,19 @@ void annexCode() { // this code is excetuted at each loop and won't interfere wi
   }
   
   //giro 
+  // Sonar Alt PID
+  if(f.ARMED) {  
+    uint16_t currentMillis = millis();
+    uint16_t dt = currentMillis - previousMillis;
+    if(dt > 200){
+      uint16_t error = setpoint - pingCm();
+      uint16_t integral = integral + error*dt;
+      uint16_t derivative = (error - previous_error)/dt;
+      uint16_t setTHR = Kp*error + Ki*integral + Kd*derivative;
+      previous_error = error;
+  }
+ 
+  /*
   if(f.ARMED) {
     uint16_t currentMillis = millis();
     //uint16_t alt; 
@@ -384,7 +405,8 @@ void annexCode() { // this code is excetuted at each loop and won't interfere wi
       }
       sonarAlt = pingCm()+1000;
     }
-    rcData[THROTTLE]=sonarAlt;; //***********throttle set manual 
+    */
+    rcData[THROTTLE]=setTHR; //***********throttle set manual 
 //  rcData[ROLL]=setROLL;
 //  rcData[YAW]=setYAW;
 //  rcData[PITCH]=setPITCH;
