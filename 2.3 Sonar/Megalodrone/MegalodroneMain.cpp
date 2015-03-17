@@ -27,12 +27,8 @@ int16_t thr_level = 1;
 uint16_t previousMillis = 0;
 
 // Sonar Alt PID Variables
-uint16_t previous_error = 0;   
-uint16_t  integral = 0;
 uint16_t setpoint = 50;  // set to 50cm for now
-uint8_t Kp = 0.001;
-uint8_t Ki = 0;
-uint8_t Kd = 0;
+uint16_t measured = 0;
 
 /*********** RC alias *****************/
 
@@ -370,18 +366,24 @@ void annexCode() { // this code is excetuted at each loop and won't interfere wi
   //giro 
   // Sonar Alt pseudo PID
   if(f.ARMED) {  
+    static int hover_count=0;
     uint16_t currentMillis = millis();
     uint16_t dt = currentMillis - previousMillis;
     if(dt > 200){
       previousMillis = currentMillis;
-      uint16_t measured = pingCm();
+      measured = pingCm();
       if(measured < setpoint)
-        setTHR=constrain(setTHR+=10,MINCHECK,2000);
+        setTHR=constrain(setTHR+=5,MINCHECK,2000);
       else if(measured == setpoint)
         setTHR+=0;
       else
-        setTHR=constrain(setTHR-=10,MINCHECK,2000);
+        setTHR=constrain(setTHR-=5,MINCHECK,2000);
       debug[2] = measured;
+      if(hover_count++ > 25){    //200*25=5000ms
+        setTHR=constrain(setTHR-=3,MINCHECK,2000);
+        if(measured <= 5)
+          f.ARMED=0;
+      }
     }
   
  
