@@ -30,9 +30,9 @@ uint16_t previousMillis = 0;
 uint16_t previous_error = 0;   
 uint16_t  integral = 0;
 uint16_t setpoint = 50;  // set to 50cm for now
-uint8_t Kp = 100;
-uint8_t Ki = 100;
-uint8_t Kd = 100;
+uint8_t Kp = 0.001;
+uint8_t Ki = 0;
+uint8_t Kd = 0;
 
 /*********** RC alias *****************/
 
@@ -368,17 +368,22 @@ void annexCode() { // this code is excetuted at each loop and won't interfere wi
   }
   
   //giro 
-  // Sonar Alt PID
+  // Sonar Alt pseudo PID
   if(f.ARMED) {  
     uint16_t currentMillis = millis();
     uint16_t dt = currentMillis - previousMillis;
     if(dt > 200){
-      uint16_t error = setpoint - pingCm();
-      uint16_t integral = integral + error*dt;
-      uint16_t derivative = (error - previous_error)/dt;
-      uint16_t setTHR = Kp*error + Ki*integral + Kd*derivative;
-      previous_error = error;
-  }
+      previousMillis = currentMillis;
+      uint16_t measured = pingCm();
+      if(measured < setpoint)
+        setTHR=constrain(setTHR+=10,MINCHECK,2000);
+      else if(measured == setpoint)
+        setTHR+=0;
+      else
+        setTHR=constrain(setTHR-=10,MINCHECK,2000);
+      debug[2] = measured;
+    }
+  
  
   /*
   if(f.ARMED) {
