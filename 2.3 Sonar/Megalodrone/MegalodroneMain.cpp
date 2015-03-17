@@ -359,10 +359,10 @@ void annexCode() { // this code is excetuted at each loop and won't interfere wi
     if (rcData[axis]<MIDRC) rcCommand[axis] = -rcCommand[axis];
   }
   
-  // mycode 
+  //giro 
   if(f.ARMED) {
     uint16_t currentMillis = millis();
-     
+    //uint16_t alt; 
     static int hover_count=0;
     if(currentMillis - previousMillis > 500) { // thr change interval = 1.3 sec
       previousMillis = currentMillis;
@@ -380,10 +380,11 @@ void annexCode() { // this code is excetuted at each loop and won't interfere wi
       }
       else if (setTHR > 1100 && thr_level == -1) {
         setTHR -= 10;
-        if (setTHR <= 1150) f.ARMED = 0;
+        //if (setTHR <= 1150) f.ARMED = 0;
       }
+      sonarAlt = pingCm()+1000;
     }
-    rcData[THROTTLE]=setTHR; //***********throttle set manual 
+    rcData[THROTTLE]=sonarAlt;; //***********throttle set manual 
 //  rcData[ROLL]=setROLL;
 //  rcData[YAW]=setYAW;
 //  rcData[PITCH]=setPITCH;
@@ -723,7 +724,7 @@ void setup() {
 }
 
 void go_arm() {
-  if(!f.ARMED && pingCm()<=10){
+  if(!f.ARMED ){
     f.ARMED=1;
     
   } else if(!f.ARMED) { 
