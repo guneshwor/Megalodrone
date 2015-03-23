@@ -28,8 +28,16 @@ uint16_t previousMillis = 0;
 
 // Sonar Alt PID Variables
 uint16_t setpoint = 50;  // set to 50cm for now
-uint16_t measured = 0;
+int16_t  SonarAlt;
+int32_t  errorSonar, deltaSonar;
+int16_t  PTermSonar,ITermSonar,DTermSonar;
+int32_t  errorAltitudeISonar;
+int32_t  lastSonarAlt;
+int16_t  SonarPidOut;
 
+int8_t PSonar = 2.5;
+int8_t ISonar = 0.1;
+int8_t DSonar = 15;
 /*********** RC alias *****************/
 
 const char pidnames[] PROGMEM =
@@ -94,6 +102,7 @@ const char boxnames[] PROGMEM = // names for dynamic generation of config GUI
   #ifdef OSD_SWITCH
     "OSD SW;"
   #endif
+  "SONAR";
 ;
 
 const uint8_t boxids[] PROGMEM = {// permanent IDs associated to boxes. This way, you can rely on an ID number to identify a BOX function.
@@ -145,6 +154,7 @@ const uint8_t boxids[] PROGMEM = {// permanent IDs associated to boxes. This way
   #ifdef OSD_SWITCH
     19, //"OSD_SWITCH;"
   #endif
+  20, //"SONAR"
 };
 
 
@@ -366,6 +376,34 @@ void annexCode() { // this code is excetuted at each loop and won't interfere wi
   //giro 
   // Sonar Alt pseudo PID
   if(f.ARMED) {  
+    uint16_t currentMillis = millis();
+    if(currentMillis - previousMillis > 500){ // 200 ms 
+      SonarAlt = pingCm();
+      debug[0] = SonarAlt;
+    }
+    // P
+    errorSonar = setpoint - SonarAlt;
+    errorSonar = constrain(errorSonar,-250,250); // limit
+    PTermSonar = errorSonar*PSonar/100; 
+    debug[1] = PTermSonar;
+      
+    // I
+    errorAltitudeISonar += errorSonar;
+    errorAltitudeISonar = constrain(errorAltitudeISonar,-30000,30000); // WindUp
+    ITermSonar = (int32_t)ISonar*errorAltitudeISonar;
+    debug[2] = ITermSonar;
+      
+    // D
+    deltaSonar = SonarAlt - lastSonarAlt;                       
+    lastSonarAlt = SonarAlt;
+    DTermSonar = (int32_t)deltaSonar*DSonar;              // 32 bits is needed for calculation
+    debug[3] = DTermSonar;
+  
+    // calcs
+    SonarPidOut = PTermSonar + ITermSonar - DTermSonar;
+    //debug[1] =  SonarPidOut;
+    
+    /*
     static int hover_count=0;
     uint16_t currentMillis = millis();
     uint16_t dt = currentMillis - previousMillis;
@@ -385,7 +423,7 @@ void annexCode() { // this code is excetuted at each loop and won't interfere wi
           f.ARMED=0;
       }
     }
-  
+  */
  
   /*
   if(f.ARMED) {
