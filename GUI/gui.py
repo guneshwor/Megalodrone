@@ -82,6 +82,28 @@ ClearBtn.pack(ipady=5, side=tk.LEFT)
 tk.Button(btns, text='Exit', command=top.destroy, width=10).pack(ipady=5, side=tk.BOTTOM)
 tk.Button(btns, text ="Upload", command = Go, width=20).pack()
 
+MoveForwardBtn = tk.Button(btns, text ="Move Forward", command = MoveForward)
+MoveForwardBtn.pack(ipady=5)
+
+TurnLeftBtn = tk.Button(btns, text ="Turn Left", command = TurnLeft)
+TurnLeftBtn.pack(ipady=5)
+
+TurnRightBtn = tk.Button(btns, text ="Turn Right", command = TurnRight)
+TurnRightBtn.pack(ipady=5)
+
+ReturnToOriginBtn = tk.Button(btns, text ="Return to Origin", command = ReturnToOrigin)
+ReturnToOriginBtn.pack(ipady=5)
+
+UndoBtn = tk.Button(btns, text ="Undo", command = Undo)
+UndoBtn.pack(ipady=5, side=tk.LEFT)
+
+ClearBtn = tk.Button(btns, text ="Clear All", command = Clear)
+ClearBtn.pack(ipady=5, side=tk.RIGHT)
+
+tk.Button(btns, text='Exit', command=top.destroy).pack(side=tk.BOTTOM, ipadx =30, ipady=5)
+tk.Button(btns, text ="Upload", command = Go).pack(ipadx=30, ipady=5, side=tk.BOTTOM)
+>>>>>>> 5fd611384733ef5d44535e692cdb08b846732d96
+
 top.mainloop()
 
 
