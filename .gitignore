@@ -3,6 +3,7 @@
 *.lo
 *.o
 *.obj
+*.elf
 
 # Precompiled Headers
 *.gch
@@ -26,3 +27,11 @@
 *.exe
 *.out
 *.app
+*.hex
+
+
+*.dblite
+build/*
+
+
+
