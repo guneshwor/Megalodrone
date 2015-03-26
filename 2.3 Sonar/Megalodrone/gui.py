@@ -59,7 +59,6 @@ text = tk.Text(master=top)
 text.pack(side=tk.RIGHT, fill=X, expand=0)
 
 btns = tk.Frame()
-btns.pack(side=tk.LEFT, fill=BOTH, expand=1)
 
 MoveForwardBtn = tk.Button(btns, text ="Move Forward", command = MoveForward, width=20)
 MoveForwardBtn.pack(ipady=5)
@@ -74,14 +73,15 @@ ReturnToOriginBtn = tk.Button(btns, text ="Return to Origin", command = ReturnTo
 ReturnToOriginBtn.pack(ipady=5)
 
 UndoBtn = tk.Button(btns, text ="Undo", command = Undo, width=10)
-UndoBtn.pack(ipady=5, side=tk.LEFT)
-
 ClearBtn = tk.Button(btns, text ="Clear All", command = Clear, width=10)
-ClearBtn.pack(ipady=5, side=tk.LEFT)
 
-tk.Button(btns, text='Exit', command=top.destroy, width=10).pack(ipady=5, side=tk.BOTTOM)
-tk.Button(btns, text ="Upload", command = Go, width=20).pack()
+UndoBtn.pack(ipady=5)
+ClearBtn.pack(ipady=5)
 
+tk.Button(btns, text='Exit', command=top.destroy, width=20).pack(ipady=5, side=tk.BOTTOM)
+tk.Button(btns, text ="Upload", command = Go, width=20).pack(ipady=5, side=tk.BOTTOM)
+
+btns.pack(side=tk.LEFT, fill=BOTH, expand=1)
 top.mainloop()
 
 
