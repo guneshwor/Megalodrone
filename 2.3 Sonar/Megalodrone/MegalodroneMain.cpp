@@ -27,17 +27,17 @@ int16_t thr_level = 1;
 uint16_t previousMillis = 0;
 
 // Sonar Alt PID Variables
-uint16_t setpoint = 50;  // set to 50cm for now
+int16_t setpoint = 50;  // set to 50cm for now
 int16_t  SonarAlt;
 int32_t  errorSonar, deltaSonar;
 int16_t  PTermSonar,ITermSonar,DTermSonar;
-int32_t  errorAltitudeISonar;
+int32_t  errorAltitudeISonar = 0;
 int32_t  lastSonarAlt;
 int16_t  SonarPidOut;
 
-int8_t PSonar = 2.5;
-int8_t ISonar = 0.1;
-int8_t DSonar = 15;
+int8_t PSonar = 1;
+int8_t ISonar = 0;
+int8_t DSonar = 0;
 /*********** RC alias *****************/
 
 const char pidnames[] PROGMEM =
@@ -377,21 +377,21 @@ void annexCode() { // this code is excetuted at each loop and won't interfere wi
   // Sonar Alt pseudo PID
   if(f.ARMED) {  
     uint16_t currentMillis = millis();
-    if(currentMillis - previousMillis > 500){ // 200 ms 
+    if(currentMillis - previousMillis > 200){ // 200 ms 
       SonarAlt = pingCm();
       debug[0] = SonarAlt;
     }
     // P
     errorSonar = setpoint - SonarAlt;
     errorSonar = constrain(errorSonar,-250,250); // limit
-    PTermSonar = errorSonar*PSonar/100; 
-    debug[1] = PTermSonar;
+    PTermSonar = errorSonar*PSonar/700; 
+    //debug[1] = PTermSonar;
       
     // I
     errorAltitudeISonar += errorSonar;
     errorAltitudeISonar = constrain(errorAltitudeISonar,-30000,30000); // WindUp
     ITermSonar = (int32_t)ISonar*errorAltitudeISonar;
-    debug[2] = ITermSonar;
+    //debug[2] = ITermSonar;
       
     // D
     deltaSonar = SonarAlt - lastSonarAlt;                       
@@ -401,7 +401,8 @@ void annexCode() { // this code is excetuted at each loop and won't interfere wi
   
     // calcs
     SonarPidOut = PTermSonar + ITermSonar - DTermSonar;
-    //debug[1] =  SonarPidOut;
+    setTHR = constrain(SonarPidOut, 1100, 1800);
+    debug[1] =  SonarPidOut;
     
     /*
     static int hover_count=0;
