@@ -35,8 +35,8 @@ int32_t  errorAltitudeISonar = 0;
 int32_t  lastSonarAlt;
 int16_t  SonarPidOut;
 
-int8_t PSonar = 1;
-int8_t ISonar = 0;
+int8_t PSonar = 2;
+int8_t ISonar = 1;
 int8_t DSonar = 0;
 /*********** RC alias *****************/
 
@@ -384,20 +384,20 @@ void annexCode() { // this code is excetuted at each loop and won't interfere wi
     // P
     errorSonar = setpoint - SonarAlt;
     errorSonar = constrain(errorSonar,-250,250); // limit
-    PTermSonar = errorSonar*PSonar/700; 
-    //debug[1] = PTermSonar;
+    PTermSonar = errorSonar*PSonar*10+1100; 
+    debug[3] = PTermSonar;
       
     // I
     errorAltitudeISonar += errorSonar;
     errorAltitudeISonar = constrain(errorAltitudeISonar,-30000,30000); // WindUp
-    ITermSonar = (int32_t)ISonar*errorAltitudeISonar;
+    ITermSonar = (int32_t)ISonar*errorAltitudeISonar/100;
     //debug[2] = ITermSonar;
       
     // D
     deltaSonar = SonarAlt - lastSonarAlt;                       
     lastSonarAlt = SonarAlt;
     DTermSonar = (int32_t)deltaSonar*DSonar;              // 32 bits is needed for calculation
-    debug[3] = DTermSonar;
+    //debug[3] = DTermSonar;
   
     // calcs
     SonarPidOut = PTermSonar + ITermSonar - DTermSonar;
