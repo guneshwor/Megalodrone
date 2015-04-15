@@ -35,6 +35,8 @@ int32_t  errorAltitudeISonar = 0;
 int32_t  lastSonarAlt;
 int16_t  SonarPidOut;
 
+uint8_t land = 0;
+
 int8_t PSonar = 2;
 int8_t ISonar = 1;
 int8_t DSonar = 0;
@@ -375,35 +377,48 @@ void annexCode() { // this code is excetuted at each loop and won't interfere wi
   
   //giro 
   // Sonar Alt pseudo PID
+  SonarAlt = pingCm();
   if(f.ARMED) {  
+    static int hover_count=0;
     uint16_t currentMillis = millis();
-    if(currentMillis - previousMillis > 200){ // 200 ms 
-      SonarAlt = pingCm();
-      debug[0] = SonarAlt;
-    }
-    // P
-    errorSonar = setpoint - SonarAlt;
-    errorSonar = constrain(errorSonar,-250,250); // limit
-    PTermSonar = errorSonar*PSonar*10+1100; 
-    debug[3] = PTermSonar;
-      
-    // I
-    errorAltitudeISonar += errorSonar;
-    errorAltitudeISonar = constrain(errorAltitudeISonar,-30000,30000); // WindUp
-    ITermSonar = (int32_t)ISonar*errorAltitudeISonar/100;
-    //debug[2] = ITermSonar;
-      
-    // D
-    deltaSonar = SonarAlt - lastSonarAlt;                       
-    lastSonarAlt = SonarAlt;
-    DTermSonar = (int32_t)deltaSonar*DSonar;              // 32 bits is needed for calculation
-    //debug[3] = DTermSonar;
-  
-    // calcs
-    SonarPidOut = PTermSonar + ITermSonar - DTermSonar;
-    setTHR = constrain(SonarPidOut, 1100, 1800);
-    debug[1] =  SonarPidOut;
     
+    if(currentMillis - previousMillis > 200){ // 200 ms 
+      
+      debug[0] = SonarAlt;
+      hover_count++;      
+    }
+    if (land==0){
+    // P
+      errorSonar = setpoint - SonarAlt;
+      errorSonar = constrain(errorSonar,-250,250); // limit
+      PTermSonar = errorSonar*PSonar*1+1000; 
+      debug[3] = PTermSonar;
+        
+      // I
+      errorAltitudeISonar += errorSonar;
+      errorAltitudeISonar = constrain(errorAltitudeISonar,-30000,30000); // WindUp
+      ITermSonar = (int32_t)ISonar*errorAltitudeISonar/100;
+      //debug[2] = ITermSonar;
+        
+      // D
+      deltaSonar = SonarAlt - lastSonarAlt;                       
+      lastSonarAlt = SonarAlt;
+      DTermSonar = (int32_t)deltaSonar*DSonar;              // 32 bits is needed for calculation
+      //debug[3] = DTermSonar;
+    
+      // calcs
+      SonarPidOut = PTermSonar + ITermSonar - DTermSonar;
+      setTHR = constrain(SonarPidOut, 1100, 1800);
+      debug[1] =  SonarPidOut;
+      
+      if(hover_count > 700)  land = 1;       //200*25=5000ms
+    }
+    else { 
+      setTHR=constrain(setTHR-=1,MINCHECK,2000);
+      if(SonarAlt <= 10)
+        f.ARMED=0;
+    }
+    debug[2] = hover_count;
     /*
     static int hover_count=0;
     uint16_t currentMillis = millis();
