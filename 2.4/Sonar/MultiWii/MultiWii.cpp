@@ -30,6 +30,8 @@ March  2015     V2.4
 
 /*********** Sonar ********************/
 #include "sonar.h"
+const uint8_t triggerPin0 = A0;
+const uint8_t echoPin0    = A0;
 
 #define setDelay 7000
  
@@ -52,6 +54,8 @@ uint8_t land = 0;
 int8_t PSonar = 2;
 int8_t ISonar = 1;
 int8_t DSonar = 0;
+
+uint16_t sonarCm();
 
 /*********** RC alias *****************/
 
@@ -648,6 +652,7 @@ void annexCode() { // this code is excetuted at each loop and won't interfere wi
       #endif
     #endif
   }
+  debug[0] = sonarCm();
 }
 
 void setup() {
@@ -1552,3 +1557,29 @@ void loop () {
   #endif 
   writeMotors();
 }
+
+
+uint16_t sonarCm(){
+  //Send..wait..timeout or receive
+  
+  // The sensor is triggered by a HIGH pulse of 10 or more microseconds.
+  // Give a short LOW pulse beforehand to ensure a clean HIGH pulse:
+  pinMode(triggerPin0, OUTPUT);
+  digitalWrite(triggerPin0, LOW);
+  delayMicroseconds(2);
+  digitalWrite(triggerPin0, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(triggerPin0, LOW);
+ 
+  // Read the signal from the sensor: a HIGH pulse whose
+  // duration is the time (in microseconds) from the sending
+  // of the ping to the reception of its echo off of an object.
+  pinMode(echoPin0, INPUT);
+  uint16_t duration = pulseIn(echoPin0, HIGH);
+  
+  delay(2);
+  // convert the time into a distance
+  return duration*2/74;
+}
+  
+  
