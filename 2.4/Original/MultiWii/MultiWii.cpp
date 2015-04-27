@@ -28,31 +28,6 @@ March  2015     V2.4
 
 #include <avr/pgmspace.h>
 
-/*********** Sonar ********************/
-#include "sonar.h"
-
-#define setDelay 7000
- 
-//uint16_t intTime = 3000; 
-uint16_t setTHR = 1100;
-int16_t thr_level = 1;
-uint16_t previousMillis = 0;
-
-// Sonar Alt PID Variables
-int16_t setpoint = 30;  // set to 30cm for now
-int16_t  SonarAlt;
-int32_t  errorSonar, deltaSonar;
-int16_t  PTermSonar,ITermSonar,DTermSonar;
-int32_t  errorAltitudeISonar = 0;
-int32_t  lastSonarAlt;
-int16_t  SonarPidOut;
-
-uint8_t land = 0;
-
-int8_t PSonar = 2;
-int8_t ISonar = 1;
-int8_t DSonar = 0;
-
 /*********** RC alias *****************/
 
 const char pidnames[] PROGMEM =
