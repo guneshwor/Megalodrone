@@ -1,12 +1,4 @@
-/*
-MultiWiiCopter by Alexandre Dubus
-www.multiwii.com
-March  2015     V2.4
- This program is free software: you can redistribute it and/or modify
- it under the terms of the GNU General Public License as published by
- the Free Software Foundation, either version 3 of the License, or
- any later version. see <http://www.gnu.org/licenses/>
-*/
+
 
 #include <avr/io.h>
 
@@ -30,8 +22,11 @@ March  2015     V2.4
 
 /*********** Sonar ********************/
 #include "sonar.h"
+#include "NewPing.h"
 const uint8_t triggerPin0 = A0;
 const uint8_t echoPin0    = A0;
+
+NewPing HCSR04_1(12, 12, 200);
 
 #define setDelay 7000
  
@@ -652,7 +647,7 @@ void annexCode() { // this code is excetuted at each loop and won't interfere wi
       #endif
     #endif
   }
-  debug[0] = sonarCm();
+  debug[0] = HCSR04_1.ping_cm(); //sonarCm();
 }
 
 void setup() {
@@ -1575,11 +1570,12 @@ uint16_t sonarCm(){
   // duration is the time (in microseconds) from the sending
   // of the ping to the reception of its echo off of an object.
   pinMode(echoPin0, INPUT);
+  
   uint16_t duration = pulseIn(echoPin0, HIGH);
   
   delay(2);
-  // convert the time into a distance
-  return duration*2/74;
+  // convert the time into a distance (cm)
+  return duration / 58;
 }
   
   
