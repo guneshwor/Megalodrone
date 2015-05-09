@@ -3,6 +3,7 @@
 *.lo
 *.o
 *.obj
+*.elf
 
 # Precompiled Headers
 *.gch
@@ -30,5 +31,4 @@
 *.dblite
 *.elf
 
-build/
 
