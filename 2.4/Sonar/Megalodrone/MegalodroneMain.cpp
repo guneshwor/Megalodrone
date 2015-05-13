@@ -48,6 +48,8 @@ int8_t PSonar = 2;
 int8_t ISonar = 1;
 int8_t DSonar = 0;
 
+const char Cmds[] PROGMEM = { };
+
 uint16_t sonarCm();
 
 /*********** RC alias *****************/
