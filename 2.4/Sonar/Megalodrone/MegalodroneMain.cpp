@@ -1,5 +1,3 @@
-
-
 #include <avr/io.h>
 
 #include "Arduino.h"
@@ -59,12 +57,6 @@ const char pidnames[] PROGMEM =
   "PITCH;"
   "YAW;"
   "ALT;"
-  "Pos;"
-  "PosR;"
-  "NavR;"
-  "LEVEL;"
-  "MAG;"
-  "VEL;"
 ;
 
 const char boxnames[] PROGMEM = // names for dynamic generation of config GUI
@@ -73,54 +65,7 @@ const char boxnames[] PROGMEM = // names for dynamic generation of config GUI
     "ANGLE;"
     "HORIZON;"
   #endif
-  #if BARO && (!defined(SUPPRESS_BARO_ALTHOLD))
-    "BARO;"
-  #endif
-  #ifdef VARIOMETER
-    "VARIO;"
-  #endif
-  "MAG;"
-  #if defined(HEADFREE)
-  "HEADFREE;"
-  "HEADADJ;"  
-#endif
-#if defined(SERVO_TILT) || defined(GIMBAL)|| defined(SERVO_MIX_TILT)
-  "CAMSTAB;"
-#endif
-#if defined(CAMTRIG)
-  "CAMTRIG;"
-#endif
-#if GPS
-  "GPS HOME;"
-  "GPS HOLD;"
-#endif
-#if defined(FIXEDWING) || defined(HELICOPTER)
-  "PASSTHRU;"
-#endif
-#if defined(BUZZER)
-  "BEEPER;"
-#endif
-#if defined(LED_FLASHER)
-  "LEDMAX;"
-  "LEDLOW;"
-#endif
-#if defined(LANDING_LIGHTS_DDR)
-  "LLIGHTS;"
-#endif
-#ifdef INFLIGHT_ACC_CALIBRATION
-  "CALIB;"
-#endif
-#ifdef GOVERNOR_P
-  "GOVERNOR;"
-#endif
-#ifdef OSD_SWITCH
-  "OSD SW;"
-#endif
-#if GPS
-  "MISSION;"
-  "LAND;"
-#endif
-  ;
+;
 
 const uint8_t boxids[] PROGMEM = {// permanent IDs associated to boxes. This way, you can rely on an ID number to identify a BOX function.
   0, //"ARM;"
@@ -128,54 +73,7 @@ const uint8_t boxids[] PROGMEM = {// permanent IDs associated to boxes. This way
     1, //"ANGLE;"
     2, //"HORIZON;"
   #endif
-  #if BARO && (!defined(SUPPRESS_BARO_ALTHOLD))
-    3, //"BARO;"
-  #endif
-  #ifdef VARIOMETER
-    4, //"VARIO;"
-  #endif
-  5, //"MAG;"
-#if defined(HEADFREE)
-  6, //"HEADFREE;"
-  7, //"HEADADJ;"  
-#endif
-#if defined(SERVO_TILT) || defined(GIMBAL)|| defined(SERVO_MIX_TILT)
-  8, //"CAMSTAB;"
-#endif
-#if defined(CAMTRIG)
-  9, //"CAMTRIG;"
-#endif
-#if GPS
-  10, //"GPS HOME;"
-  11, //"GPS HOLD;"
-#endif
-#if defined(FIXEDWING) || defined(HELICOPTER)
-  12, //"PASSTHRU;"
-#endif
-#if defined(BUZZER)
-  13, //"BEEPER;"
-#endif
-#if defined(LED_FLASHER)
-  14, //"LEDMAX;"
-  15, //"LEDLOW;"
-#endif
-#if defined(LANDING_LIGHTS_DDR)
-  16, //"LLIGHTS;"
-#endif
-#ifdef INFLIGHT_ACC_CALIBRATION
-  17, //"CALIB;"
-#endif
-#ifdef GOVERNOR_P
-  18, //"GOVERNOR;"
-#endif
-#ifdef OSD_SWITCH
-  19, //"OSD_SWITCH;"
-#endif
-#if GPS
-  20, //"MISSION;"
-  21, //"LAND;"
-#endif
-  };
+};
 
 
 uint32_t currentTime = 0;
@@ -238,42 +136,8 @@ int16_t  i2c_errors_count = 0;
   int8_t  cosZ = 100;                  // cos(angleZ)*100
 #endif
 
-
-
-// **********************
-//Automatic ACC Offset Calibration
-// **********************
-#if defined(INFLIGHT_ACC_CALIBRATION)
-  uint16_t InflightcalibratingA = 0;
-  int16_t AccInflightCalibrationArmed;
-  uint16_t AccInflightCalibrationMeasurementDone = 0;
-  uint16_t AccInflightCalibrationSavetoEEProm = 0;
-  uint16_t AccInflightCalibrationActive = 0;
-#endif
-
-// **********************
-// power meter
-// **********************
-#if defined(POWERMETER) || ( defined(LOG_VALUES) && (LOG_VALUES >= 3) )
-  uint32_t pMeter[PMOTOR_SUM + 1];  // we use [0:7] for eight motors,one extra for sum
-  uint8_t pMeterV;                  // dummy to satisfy the paramStruct logic in ConfigurationLoop()
-  uint32_t pAlarm;                  // we scale the eeprom value from [0:255] to this value we can directly compare to the sum in pMeter[6]
-  uint16_t powerValue = 0;          // last known current
-#endif
 uint16_t intPowerTrigger1;
 
-// **********************
-// telemetry
-// **********************
-#if defined(LCD_TELEMETRY)
-  uint8_t telemetry = 0;
-  uint8_t telemetry_auto = 0;
-  int16_t annex650_overrun_count = 0;
-#endif
-#ifdef LCD_TELEMETRY_STEP
-  char telemetryStepSequence []  = LCD_TELEMETRY_STEP;
-  uint8_t telemetryStepIndex = 0;
-#endif
 
 // ******************
 // rc functions
@@ -301,15 +165,6 @@ uint8_t rcSerialCount = 0;   // a counter to select legacy RX when there is no m
 int16_t lookupPitchRollRC[5];// lookup table for expo & RC rate PITCH+ROLL
 uint16_t lookupThrottleRC[11];// lookup table for expo & mid THROTTLE
 
-#if defined(SERIAL_RX)
-  volatile uint8_t  spekFrameFlags;
-  volatile uint32_t spekTimeLast;
-  uint8_t  spekFrameDone;
-#endif
-
-#if defined(OPENLRSv2MULTI)
-  uint8_t pot_P,pot_I; // OpenLRS onboard potentiometers for P and I trim or other usages
-#endif
 
 
 // *************************
@@ -333,11 +188,9 @@ conf_t conf;
 #endif
 
 // **********************
-// GPS common variables, no need to put them in defines, since compiller will optimize out unused variables
+// Common variables, no need to put them in defines, since compiller will optimize out unused variables
 // **********************
-#if GPS
-  gps_conf_struct GPS_conf;
-#endif
+
   int16_t  GPS_angle[2] = { 0, 0};                      // the angles that must be applied for GPS correction
   int32_t  GPS_coord[2];
   int32_t  GPS_home[2];
@@ -353,7 +206,7 @@ conf_t conf;
   uint8_t  GPS_update = 0;                              // a binary toogle to distinct a GPS position update
   uint16_t GPS_ground_course = 0;                       //                   - unit: degree*10
 
-  //uint8_t GPS_mode  = GPS_MODE_NONE; // contains the current selected gps flight mode --> moved to the f. structure
+  
   uint8_t NAV_state = 0; // NAV_STATE_NONE;  /// State of the nav engine
   uint8_t NAV_error = 0; // NAV_ERROR_NONE;
   uint8_t prv_gps_modes = 0;              /// GPS_checkbox items packed into 1 byte for checking GPS mode changes
@@ -385,11 +238,7 @@ conf_t conf;
 
 uint8_t alarmArray[ALRM_FAC_SIZE];           // array
 
-#if BARO
-  int32_t baroPressure;
-  int16_t baroTemperature;
-  int32_t baroPressureSum;
-#endif
+
 
 void annexCode() { // this code is excetuted at each loop and won't interfere with control loop if it lasts less than 650 microseconds
   static uint32_t calibratedAccTime;
@@ -500,9 +349,7 @@ void annexCode() { // this code is excetuted at each loop and won't interfere wi
   #if defined(RX_RSSI)
     static uint8_t ind = 0;
     static uint16_t rvec[RSSI_SMOOTH], rsum, r;
-
-    // http://www.multiwii.com/forum/viewtopic.php?f=8&t=5530
-    #if defined(RX_RSSI_CHAN)
+  #if defined(RX_RSSI_CHAN)
       uint16_t rssi_Input = constrain(rcData[RX_RSSI_CHAN],1000,2000);
       r = map((uint16_t)rssi_Input , 1000, 2000, 0, 1023);
     #else
@@ -752,7 +599,7 @@ void setup() {
     init_landing_lights();
   #endif
   #ifdef FASTER_ANALOG_READS
-    ADCSRA |= _BV(ADPS2) ; ADCSRA &= ~_BV(ADPS1); ADCSRA &= ~_BV(ADPS0); // this speeds up analogRead without loosing too much resolution: http://www.arduino.cc/cgi-bin/yabb2/YaBB.pl?num=1208715493/11
+    ADCSRA |= _BV(ADPS2) ; ADCSRA &= ~_BV(ADPS1); ADCSRA &= ~_BV(ADPS0); // this speeds up analogRead without loosing too much resolution:
   #endif
   #if defined(LED_FLASHER)
     init_led_flasher();
