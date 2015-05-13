@@ -30,6 +30,8 @@ uint16_t previousMillis = 0;
 uint16_t setpoint = 50;  // set to 50cm for now
 uint16_t measured = 0;
 
+const char Cmds[] PROGMEM = {  };
+
 /*********** RC alias *****************/
 
 const char pidnames[] PROGMEM =
