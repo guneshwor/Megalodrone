@@ -40,6 +40,13 @@ uint8_t land = 0;
 int8_t PSonar = 2;
 int8_t ISonar = 1;
 int8_t DSonar = 0;
+
+uint16_t setpoint = 50;  // set to 50cm for now
+uint16_t measured = 0;
+
+const char Cmds[] PROGMEM = {  };
+
+
 /*********** RC alias *****************/
 
 const char pidnames[] PROGMEM =

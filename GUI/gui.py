@@ -82,6 +82,7 @@ ClearBtn.pack(ipady=5, side=tk.LEFT)
 tk.Button(btns, text='Exit', command=top.destroy, width=10).pack(ipady=5, side=tk.BOTTOM)
 tk.Button(btns, text ="Upload", command = Go, width=20).pack()
 
+
 top.mainloop()
 
 
