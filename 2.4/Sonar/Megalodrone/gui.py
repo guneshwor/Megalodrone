@@ -29,9 +29,17 @@ def Upload():
 	ComPort = ComPortBox.get()
 	SetCmds()
 	text.config(state=NORMAL)
-	output = subprocess.check_output('scons ARDUINO_PORT=' + ComPort + ' upload', shell=True)
-	text.insert(tk.END, output)
-	text.insert(tk.END, "Done uploading!!!\n")
+	output = ''
+	try:
+		output = subprocess.check_output(
+			'scons ARDUINO_PORT=' + ComPort + ' upload',
+			stderr=subprocess.STDOUT,
+			shell=True
+		)
+	except:
+		pass
+	output = output + "\nDone uploading!!!\n" if output is not '' else 'Error occured\n'
+	text.insert(tk.END, output )
 	text.see(tk.END)
 	text.config(state=DISABLED)
 	global cmds
@@ -88,7 +96,7 @@ top.title("Megalodrone")
 
 
 text = tk.Text(master=top)
-text.pack(side=tk.RIGHT, fill=X, expand=0)
+text.pack(side=tk.RIGHT, fill=X, expand=True)
 
 btns = tk.Frame()
 
